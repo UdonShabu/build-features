@@ -1,5 +1,5 @@
 import React from "react";
-import StopwatchTimer from "./StopwatchTimer";
+import StopwatchTimer from "./_components/StopwatchTimer";
 
 const ReactFocusPage = () => {
   return (
