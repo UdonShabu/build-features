@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import ReactionPicker from "./ReactionPicker";
 
@@ -16,19 +16,35 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
   const [showPicker, setShowPicker] = useState(false);
   const [reaction, setReaction] = useState<string | null>(null);
   const holdTimeout = useRef<NodeJS.Timeout | null>(null);
+  const pickerRef = useRef<HTMLDivElement | null>(null);
 
+  // Handle long press
   const handlePointerDown = () => {
     holdTimeout.current = setTimeout(() => setShowPicker(true), 600);
   };
-
   const handlePointerUp = () => {
     if (holdTimeout.current) clearTimeout(holdTimeout.current);
   };
 
+  // Handle reaction select
   const handleSelect = (emoji: string) => {
     setReaction(emoji);
     setShowPicker(false);
   };
+
+  // 🔍 Detect outside click
+  useEffect(() => {
+    if (!showPicker) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
+        setShowPicker(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showPicker]);
 
   return (
     <div className="relative">
@@ -42,7 +58,11 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
       </div>
 
       <AnimatePresence>
-        {showPicker && <ReactionPicker onSelect={handleSelect} />}
+        {showPicker && (
+          <div ref={pickerRef}>
+            <ReactionPicker onSelect={handleSelect} />
+          </div>
+        )}
       </AnimatePresence>
 
       {reaction && (
