@@ -6,10 +6,10 @@ import Voting from "./_components/Voting";
 const ReactFocusPage = () => {
   return (
     <div>
-      {/* <StopwatchTimer /> */}
+      <StopwatchTimer />
       {/* <PinMessages /> */}
       {/* <ChatScreen /> */}
-      <Voting />
+      {/* <Voting /> */}
     </div>
   );
 };
